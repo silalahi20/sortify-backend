@@ -25,6 +25,7 @@ async def shutdown_event():
 
 app.include_router(user_router, prefix="/users", tags=["Users"])
 app.include_router(progress_router, prefix="/progress", tags=["Progress"])
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

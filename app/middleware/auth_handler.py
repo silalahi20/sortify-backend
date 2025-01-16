@@ -8,10 +8,14 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from app.config.database import get_collection
 from bson import ObjectId
+from dotenv import load_dotenv
+import os
 
-SECRET_KEY = "YOUR_SECRET_KEY"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM =os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",30))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

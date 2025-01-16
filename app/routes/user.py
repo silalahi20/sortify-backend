@@ -27,8 +27,7 @@ async def register_user(user: UserCreate):
     
     new_user = await users_collection.insert_one(user_dict)
     created_user = await users_collection.find_one({"_id": new_user.inserted_id})
-    
-    # Konversi `_id` menjadi string
+
     created_user["_id"] = str(created_user["_id"])
     return UserInDB(**created_user)
 
@@ -43,19 +42,14 @@ async def login_user(user: UserLogin):
     if not pwd_context.verify(user.password, existing_user["password"]):
         raise HTTPException(status_code=401, detail="Incorrect password")
     
-    # Tambahkan access_token dan token_type ke dictionary user
     existing_user["access_token"] = create_access_token({"sub": str(existing_user["_id"])})
     existing_user["token_type"] = "bearer"
-
-    # Konversi ObjectId ke string untuk memastikan data valid
     existing_user["_id"] = str(existing_user["_id"])
     
-    # Kembalikan objek yang valid ke Pydantic
     return UserInDB.from_orm(existing_user)
 
 
 @router.get("/me", response_model=UserInDB)
 async def get_me(current_user: dict = Depends(get_current_user)):
-    # Konversi _id menjadi string
     current_user["_id"] = str(current_user["_id"])
     return UserInDB(**current_user)

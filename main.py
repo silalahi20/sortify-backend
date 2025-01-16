@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.routes.user import router as user_router
-from app.routes.learning import router as learning_router
+from app.routes.progress import router as progress_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.config.database import test_connection
 
@@ -24,8 +24,7 @@ async def shutdown_event():
     print("Shutting down...")
 
 app.include_router(user_router, prefix="/users", tags=["Users"])
-app.include_router(learning_router, prefix="/learning", tags=["Learning"])
-
+app.include_router(progress_router, prefix="/progress", tags=["Progress"])
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

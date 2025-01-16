@@ -5,21 +5,26 @@ from typing import Dict, Optional
 from bson import ObjectId
 from datetime import datetime
 
-class UserProgress(BaseModel):
-    learning: Dict[str, Dict[str, bool]] = Field(default_factory=lambda: {
-        "bubbleSort": {"completed": False, "lastAccessed": datetime.utcnow()},
-        "insertionSort": {"completed": False, "lastAccessed": datetime.utcnow()},
-        "selectionSort": {"completed": False, "lastAccessed": datetime.utcnow()}
-    })
+class ProgressLearning(BaseModel):
+    completed: bool = False
+    lastAccessed: Optional[datetime] = None
 
-    @validator('*', pre=True, each_item=True)
-    def update_last_accessed(cls, v):
-        if 'lastAccessed' in v:
-            v['lastAccessed'] = datetime.utcnow()
-        return v
+class ProgressPractice(BaseModel):
+    completed: bool = False
+    bestTime: Optional[int] = None  # Dalam detik
+
+class ProgressTest(BaseModel):
+    completed: bool = False
+    lastScore: Optional[int] = None  # Nilai dari 0-10
+    attempts: int = 0  # Jumlah percobaan
+
+class UserProgress(BaseModel):
+    learning: Dict[str, ProgressLearning] = Field(default_factory=dict)
+    practice: Dict[str, ProgressPractice] = Field(default_factory=dict)
+    test: Dict[str, ProgressTest] = Field(default_factory=dict)
 
 class UserInDB(BaseModel):
-    id: str = Field(alias="_id")  # Menggunakan alias untuk ObjectId
+    id: str = Field(alias="_id")
     email: EmailStr
     name: str
     password: str
@@ -27,6 +32,7 @@ class UserInDB(BaseModel):
     is_active: bool = True
     created_at: datetime
     updated_at: datetime
+    progress: Optional[UserProgress] = Field(default_factory=UserProgress)  # Tambahkan progress di sini
     access_token: Optional[str] = None
     token_type: Optional[str] = None
 

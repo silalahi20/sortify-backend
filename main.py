@@ -23,8 +23,15 @@ async def startup_event():
 async def shutdown_event():
     print("Shutting down...")
 
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to SORTIFY : Basic Sorting Virtual Lab"}
+
+
 app.include_router(user_router, prefix="/users", tags=["Users"])
 app.include_router(progress_router, prefix="/progress", tags=["Progress"])
+
 
 if __name__ == "__main__":
     import uvicorn
